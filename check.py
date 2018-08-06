@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 CITY_DATA = { 'chicago': 'chicago.csv',
               'new york city': 'new_york_city.csv',
@@ -15,9 +15,16 @@ df['month'] = df['Start Time'].dt.month # month column
 df['day_of_week'] = df['Start Time'].dt.weekday_name # day column
 df['hour'] = df['Start Time'].dt.hour # hour column
 df['routes'] = df['Start Station'] + ' to ' + df['End Station'] # station combination
+df['Birth Year'].fillna(0, inplace=True)
 
-hf = df.tail(10)
-print(hf[['routes', 'Trip Duration']].values)
-plt.plot(hf['Trip Duration']/60 , hf['routes'])
+print('-'*40)
+print(df)
+print('-'*40)
 
-plt.show()
+grp = df.groupby('day_of_week')
+print(grp.groups)
+
+# x = hf['routes']
+# y = hf['Trip Duration']/60
+# plt.plot(y ,x)
+# plt.show()

@@ -5,49 +5,84 @@ import numpy as np
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import plotly.graph_objs as go
 
-
-# load the dataframe
-# city, month, day = bs.get_filters()
+# Loading the dataframe
 df = bs.load_data('chicago', 'all', 'all')
 
-hf = pd.DataFrame({
-    'Trip Duration': df['Trip Duration'],
-    'routes': df['routes']
-})
+days = df['day_of_week'].unique()
 
-hf['Trip Duration'] = hf['Trip Duration']/60
-hf = hf.groupby(['routes'])['Trip Duration'].sum()
+for day in days:
+    data[day]['cust_count'] = df[(df['User Type'] == 'Customer') & (df['day_of_week'] == day)]['Trip Duration']
 
-hf = hf.tail(100)
-x_vals = hf.index
-y_vals = hf.values
 
+data = {
+    'Sunday': {
+        'subs_count': 100,
+        'cust_count': 200,
+    },
+    'Monday': {
+        'subs_count': 150,
+        'cust_count': 210
+    }
+}
+
+subs_count = data['Sunday']['subs_count'] + data['Monday']['subs_count']
+cust_count = data['Sunday']['cust_count'] + data['Monday']['cust_count']
+
+# customers = {}
+# subscribers = {}
+
+# for day in df['day_of_week'].unique():
+#     customers[day] = df[(df['User Type'] == 'Customer') & (df['day_of_week'] == day)]['Trip Duration']
+#     subscribers[day] = df[(df['User Type'] == 'Subscriber') & (df['day_of_week'] == day)]['Trip Duration']
+
+# customers = df[(df['User Type'] == 'Customer') & (df['day_of_week'] == 'Sunday')][['Trip Duration', 'day_of_week']].values
+# subscriber = df[(df['User Type'] == 'Subscriber') & (df['day_of_week'] == 'Sunday')]['Trip Duration'].values
+# day_of_week = df['day_of_week'].unique()
+
+
+# Graph configuration
 app = dash.Dash()
 app.layout = html.Div(children=[
-    html.H1(children='Exploring Bikeshare Data'),
+    html.H1(children='Data Visualization with Dash'),
 
     html.Div(children='''
-        A visualization of Bike's Trip Duration(in minutes) from 'Start Station' to 'End Station'
+        
     '''),
 
     dcc.Graph(
-        id='example-graph',
-        figure={
-            'data': [
-                {
-                    'x': x_vals,
-                    'y': y_vals,
-                    'type': 'bar',
-                    'name': 'SF'
-                },
+        figure=go.Figure(
+            data=[
+                go.Bar(
+                    x=list(data.keys()),
+                    y=[data['Sunday']['cust_count'], data['Monday']['cust_count']],
+                    name='Customer',
+                    marker=go.Marker(
+                        color='rgb(55, 83, 109)'
+                    )
+                ),
+                go.Bar(
+                    x=list(data.keys()),
+                    y=[data['Sunday']['subs_count'], data['Monday']['subs_count']],
+                    name='subscriber',
+                    marker=go.Marker(
+                        color='rgb(26, 118, 255)'
+                    )
+                )
             ],
-            'layout': {
-                'title': 'Trip Duration Visualization',
-                'yaxis': {'label':'Trip Duration (Minutes)'},
-                'xaxis': {'label' :'Start to End stations'},
-            }
-        }
+            layout=go.Layout(
+                title='Demo',
+                showlegend=True,
+                legend=go.Legend(
+                    x=0,
+                    y=1.0
+                ),
+                margin=go.Margin(l=40, r=0, t=40, b=30)
+            )
+        ),
+        style={'height': 300},
+        id='my-graph'
     )
 ])
 
