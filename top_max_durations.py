@@ -17,22 +17,17 @@ df['hour'] = df['Start Time'].dt.hour # hour column
 df['routes'] = df['Start Station'] + ' to ' + df['End Station'] # station combination
 df['Birth Year'].fillna(0, inplace=True)
 
-days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-user_ct, cust_ct, subs_ct = {}, {}, {}
-x, y = [], []
+print('-'*80)
+df.sort_values('Trip Duration', axis=0, ascending=True, inplace=True)
+print(df.head(2))
 
-for day in days:
-    user_ct[day] = df[df['day_of_week'] == day].count()
+hf = df.tail(10)
+# hf = df.iloc[np.r_[0:10, -10:0]]
 
-    # cust_ct[day] = dayframe[dayframe['User Type'] == 'Customer'].count()
-    # subs_ct[day] = dayframe[dayframe['User Type'] == 'Subscriber'].count()
-    
-for day, count in user_ct.items():
-    x.append(day)
-    y.append(count)
+x = hf['routes']
+y = hf['Trip Duration']/3600
 
-
-plt.plot(x ,y)
+plt.plot(y ,x)
 
 plt.legend()
 plt.show()
