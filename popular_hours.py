@@ -1,59 +1,40 @@
-import bikeshare_2 as bs
 import pandas as pd
 import numpy as np
-
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
-# Loading the dataframe
-df = bs.load_data('chicago', 'all', 'all')
+import bikeshare_2 as bs
 
-days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-pop_cust_hour, pop_subs_hour = {}, {}
-xc, yc, xs, ys = [], [], [], []
 
-for day in days:
-    dayframe = df[df['day_of_week'] == day]
+def get_time_insights(df):
 
-    cust_frame = dayframe[dayframe['User Type'] == 'Customer']
-    pop_cust_hour[day] = cust_frame['hour'].mode()[0]
+    pop_cust_hour, pop_subs_hour, pop_hour = {}, {}, {}
 
-    subs_frame = dayframe[dayframe['User Type'] == 'Subscriber']
-    pop_subs_hour[day] = subs_frame['hour'].mode()[0]
-
-for day, ph in pop_cust_hour.items():
-    xc.append(day)
-    yc.append(ph)
-
-for day, ph in pop_subs_hour.items():
-    xs.append(day)
-    ys.append(ph)
-
-# Graph configuration
-app = dash.Dash()
-app.layout = html.Div(children=[
-    html.H1(children='Data Visualization with Dash'),
-
-    html.Div(children='''
+    for day in bs.DAYS:
+        dayframe = df[df['day_of_week'] == day]
+        pop_hour[day] = dayframe['hour'].mode()[0]
         
-    '''),
+        cust_frame = dayframe[dayframe['User Type'] == 'Customer']
+        pop_cust_hour[day] = cust_frame['hour'].mode()[0]
 
-    dcc.Graph(
+        subs_frame = dayframe[dayframe['User Type'] == 'Subscriber']
+        pop_subs_hour[day] = subs_frame['hour'].mode()[0]
+
+    plot = dcc.Graph(
         figure=go.Figure(
             data=[
                 go.Line(
-                    x=xc,
-                    y=yc,
+                    x=list(pop_cust_hour.keys()),
+                    y=list(pop_cust_hour.values()),
                     name='Customer',
                     marker=go.Marker(
                         color='rgb(55, 83, 109)'
                     )
                 ),
                 go.Line(
-                    x=xs,
-                    y=ys,
+                    x=list(pop_subs_hour.keys()),
+                    y=list(pop_subs_hour.values()),
                     name='Subscriber',
                     marker=go.Marker(
                         color='rgb(26, 118, 255)'
@@ -63,17 +44,15 @@ app.layout = html.Div(children=[
             layout=go.Layout(
                 title='Comparision of popular starting hours between Subscribers and Customers',
                 showlegend=True,
-                legend=go.Legend(
+                legend=go.layout.Legend(
                     x=0,
                     y=1
                 ),
-                margin=go.Margin(l=40, r=0, t=40, b=30)
+                margin=go.layout.Margin(l=40, r=0, t=40, b=30)
             )
         ),
         style={'height': 300},
-        id='my-graph'
+        id='time-stats'
     )
-])
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+    return plot

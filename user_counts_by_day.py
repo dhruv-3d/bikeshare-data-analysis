@@ -1,63 +1,42 @@
-import bikeshare_2 as bs
 import pandas as pd
 import numpy as np
-
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
-# Loading the dataframe
-df = bs.load_data('chicago', 'all', 'all')
+import bikeshare_2 as bs
 
-days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-user_ct, cust_ct, subs_ct = {}, {}, {}
-# x, y = [], []
-xc, yc, xs, ys = [], [], [], []
 
-for day in days:
-    dayframe = df[df['day_of_week'] == day]
-    user_ct[day] = dayframe['day_of_week'].count()
+def get_users_insights(df):
 
-    cust_frame = dayframe[dayframe['User Type'] == 'Customer']
-    cust_ct[day] = cust_frame['User Type'].count()
-    
-    subs_frame = dayframe[dayframe['User Type'] == 'Subscriber']
-    subs_ct[day] = subs_frame['User Type'].count()
+    user_ct, cust_ct, subs_ct = {}, {}, {}
 
-for day, count in cust_ct.items():
-    xc.append(day)
-    yc.append(count)
+    for day in bs.DAYS:
+        dayframe = df[df['day_of_week'] == day]
+        user_ct[day] = dayframe['day_of_week'].count()
 
-for day, ph in subs_ct.items():
-    xs.append(day)
-    ys.append(ph)
+        cust_frame = dayframe[dayframe['User Type'] == 'Customer']
+        cust_ct[day] = cust_frame['User Type'].count()
 
-# Graph configuration
-app = dash.Dash()
-app.layout = html.Div(children=[
-    html.H1(children='Data Visualization with Dash'),
+        subs_frame = dayframe[dayframe['User Type'] == 'Subscriber']
+        subs_ct[day] = subs_frame['User Type'].count()
 
-    html.Div(children='''
-        
-    '''),
-
-    dcc.Graph(
+    plot = dcc.Graph(
         figure=go.Figure(
             data=[
                 go.Bar(
-                    x=xc,
-                    y=yc,
+                    x=list(cust_ct.keys()),
+                    y=list(cust_ct.values()),
                     name='Customer',
-                    marker=go.Marker(
+                    marker=go.bar.Marker(
                         color='rgb(55, 83, 109)'
                     )
                 ),
                 go.Bar(
-                    x=xs,
-                    y=ys,
+                    x=list(subs_ct.keys()),
+                    y=list(subs_ct.values()),
                     name='Subscriber',
-                    marker=go.Marker(
+                    marker=go.bar.Marker(
                         color='rgb(26, 118, 255)'
                     )
                 )
@@ -65,17 +44,14 @@ app.layout = html.Div(children=[
             layout=go.Layout(
                 title='User counts on days of the week',
                 showlegend=True,
-                legend=go.Legend(
+                legend=go.layout.Legend(
                     x=0,
                     y=1
                 ),
-                margin=go.Margin(l=40, r=0, t=40, b=30)
+                margin=go.layout.Margin(l=40, r=0, t=40, b=30)
             )
         ),
         style={'height': 300},
-        id='my-graph'
+        id='user-stats'
     )
-])
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
+    return plot
