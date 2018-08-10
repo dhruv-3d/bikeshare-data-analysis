@@ -9,7 +9,7 @@ CITY_DATA = {'chicago': 'chicago.csv',
 DAYS = ['Sunday', 'Monday', 'Tuesday',
         'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-MONTHS = ['january', 'february', 'march', 'april', 'may', 'june']
+MONTHS = ['January', 'February', 'March', 'April', 'May', 'June']
 
 
 def get_filters():
@@ -68,9 +68,15 @@ def load_data(city, month, day):
 
     # filtering by month if applicable
     if month != 'all':
-        # use the index of the MONTHS list to get the corresponding int
-        month = MONTHS.index(month) + 1
-        df = df[df['month'] == month]
+        if type(month) == list:
+            df = df[
+            (df['month'] >= month[0]) &
+            (df['month'] <= month[1])
+            ]
+        else:
+            # use the index of the MONTHS list to get the corresponding int
+            month = MONTHS.index(month.title()) + 1
+            df = df[df['month'] == month]
 
     # filtering by day of week if applicable
     if day != 'all':
@@ -129,7 +135,6 @@ def station_stats(df):
     station_stat['popular_end_st'] = popular_end_st
 
     # display most frequent combination of start station and end station trip
-    # df['freq_route'] = df['Start Station'] + ' to ' +df['End Station']
     pop = df['routes'].value_counts()
     popular_st = pop.idxmax()
     print("\nMost popular route from Start Station to End Station: \n", popular_st)

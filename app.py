@@ -3,10 +3,13 @@ import numpy as np
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import plotly.graph_objs as go
+from dash.dependencies import Input, Output
 
 import bikeshare_2 as bs
 import user_counts_by_day as ucd
 import popular_hours as ph
+import range_slider as rs
 
 # Load the data
 df = bs.load_data(city='chicago', month='all', day='all')
@@ -17,22 +20,58 @@ print(user_stat)
 # Graph configuration
 app = dash.Dash()
 app.layout = html.Div(children=[
+    html.H1(
+        children='Bikeshare Data Visualization with Dash and its analysis',
+        style={'text-align': 'center'}
+    ),
     dcc.Tabs(id="tabs", children=[
+        dcc.Tab(label='Station & Trip Stats', children=[
+            html.Div(children=[
+                html.H1(
+                    "The stats regarding popular station and routes and trips will be here."),
+            ])
+        ]),
         dcc.Tab(label='User Insights', children=[
-            html.Div([
+            html.Div(children=[
                 html.P(
                     'Describe in breif about the plotting done below.'
                 ),
-                ucd.get_users_insights(df),
-                html.Hr(),
-                html.P(
-                    'Total No. of subscribers: ' + str(user_stat['user_types'][0])
+                dcc.Graph(
+                    figure=go.Figure(
+                        data=ucd.get_users_insights(df),
+                        layout=go.Layout(
+                            xaxis={'title': 'Days of the week'},
+                            yaxis={'title': 'Number of users'},
+                            title='User counts on days of the week',
+                            showlegend=True,
+                            legend=go.layout.Legend(
+                                x=0,
+                                y=1
+                            ),
+                            margin=go.layout.Margin(l=40, r=0, t=40, b=30)
+                        )
+                    ),
+                    style={
+                        'height': 300,
+                        'padding': 30,
+                    },
+                    id='user-stats'
+                ),
+                html.Div(
+                    children=[rs.month_selector('user-month-slider')],
+                    style={'padding': 30}
                 ),
                 html.P(
-                    'Total No. of customers: ' + str(user_stat['user_types'][1])
+                    'Total No. of subscribers: ' +
+                    str(user_stat['user_types'][0])
                 ),
                 html.P(
-                    'Total No. of dependent: ' + str(user_stat['user_types'][2])
+                    'Total No. of customers: ' +
+                    str(user_stat['user_types'][1])
+                ),
+                html.P(
+                    'Total No. of dependent: ' +
+                    str(user_stat['user_types'][2])
                 ),
                 html.Hr(),
                 html.P(
@@ -45,20 +84,93 @@ app.layout = html.Div(children=[
                 html.P(
                     'Describe in breif about the plotting done below.'
                 ),
-                ph.get_time_insights(df),
+                dcc.Graph(
+                    figure=go.Figure(
+                        data=ph.get_time_insights(df),
+                        layout=go.Layout(
+                            xaxis={'title': 'Days of the week'},
+                            yaxis={
+                                'title': 'Popular starting hours (24hr scale)'},
+                            title='Comparision of popular starting hours between Subscribers and Customers',
+                            showlegend=True,
+                            legend=go.layout.Legend(
+                                x=0,
+                                y=1
+                            ),
+                            margin=go.layout.Margin(l=40, r=0, t=40, b=30)
+                        )
+                    ),
+                    style={
+                        'height': 300,
+                        'padding': 30,
+                    },
+                    id='time-stats'
+                ),
+                html.Div([
+                    rs.month_selector('time-month-slider')
+                ],
+                    style={
+                    'padding': 30,
+                }),
                 html.Hr(),
                 html.P(
                     'Describe in detail, the insights from above plot.'
                 ),
             ])
         ]),
-        dcc.Tab(label='Tab three', children=[
-            html.Div([
-                html.H1("This is the content in tab 3"),
-            ])
-        ]),
     ])
 ])
+
+
+# Callback to update the User Insights graph on selection of month(s) from Months Slider
+@app.callback(
+    dash.dependencies.Output('user-stats', 'figure'),
+    [dash.dependencies.Input('user-month-slider', 'value')])
+def update_user_figure(month):
+    filtered_df = bs.load_data(city='chicago', month=month, day='all')
+
+    updated_trace = ucd.get_users_insights(filtered_df)
+
+    return {
+        'data': updated_trace,
+        'layout': go.Layout(
+            xaxis={'title': 'Days of the week'},
+            yaxis={'title': 'Number of users'},
+            title='User counts on days of the week',
+            showlegend=True,
+            legend=go.layout.Legend(
+                x=0,
+                y=1
+            ),
+            margin=go.layout.Margin(l=40, r=0, t=40, b=30)
+        )
+    }
+
+
+# Callback to update the Time Insights graph on selection of month(s) from Months Slider
+@app.callback(
+    dash.dependencies.Output('time-stats', 'figure'),
+    [dash.dependencies.Input('time-month-slider', 'value')])
+def update_time_figure(month):
+    filtered_df = bs.load_data(city='chicago', month=month, day='all')
+
+    updated_trace = ph.get_time_insights(filtered_df)
+
+    return {
+        'data': updated_trace,
+        'layout': go.Layout(
+            xaxis={'title': 'Days of the week'},
+            yaxis={'title': 'Popular starting hours (24hr scale)'},
+            title='Comparision of popular starting hours between Subscribers and Customers',
+            showlegend=True,
+            legend=go.layout.Legend(
+                x=0,
+                y=1
+            ),
+            margin=go.layout.Margin(l=40, r=0, t=40, b=30)
+        )
+    }
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
