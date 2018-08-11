@@ -24,6 +24,23 @@ app.layout = html.Div(children=[
         children='Bikeshare Data Visualization with Dash and its analysis',
         style={'text-align': 'center'}
     ),
+    html.Div(
+        children=[
+            dcc.Dropdown(
+                id='city-dropdown',
+                options=[
+                    {'label': 'Chicago', 'value': 'chicago'},
+                    {'label': 'New York City', 'value': 'new york city'},
+                    {'label': 'Washington', 'value': 'washington'}
+                ],
+                value='chicago'
+            )
+        ],
+        style={
+            'padding-bottom': '1%',
+            'margin-right': '70%'
+        }
+    ),
     dcc.Tabs(id="tabs", children=[
         dcc.Tab(label='Station & Trip Stats', children=[
             html.Div(children=[
@@ -55,7 +72,7 @@ app.layout = html.Div(children=[
                         'height': 300,
                         'padding': 30,
                     },
-                    id='user-stats'
+                    id='user-stats-graph'
                 ),
                 html.Div(
                     children=[rs.month_selector('user-month-slider')],
@@ -63,15 +80,15 @@ app.layout = html.Div(children=[
                 ),
                 html.P(
                     'Total No. of subscribers: ' +
-                    str(user_stat['user_types'][0])
+                    str(user_stat['user_counts'][0])
                 ),
                 html.P(
                     'Total No. of customers: ' +
-                    str(user_stat['user_types'][1])
+                    str(user_stat['user_counts'][1])
                 ),
                 html.P(
                     'Total No. of dependent: ' +
-                    str(user_stat['user_types'][2])
+                    str(user_stat['user_counts'][2])
                 ),
                 html.Hr(),
                 html.P(
@@ -104,7 +121,7 @@ app.layout = html.Div(children=[
                         'height': 300,
                         'padding': 30,
                     },
-                    id='time-stats'
+                    id='time-stats-graph'
                 ),
                 html.Div([
                     rs.month_selector('time-month-slider')
@@ -124,10 +141,13 @@ app.layout = html.Div(children=[
 
 # Callback to update the User Insights graph on selection of month(s) from Months Slider
 @app.callback(
-    dash.dependencies.Output('user-stats', 'figure'),
-    [dash.dependencies.Input('user-month-slider', 'value')])
-def update_user_figure(month):
-    filtered_df = bs.load_data(city='chicago', month=month, day='all')
+    Output('user-stats-graph', 'figure'),
+    [
+        Input('city-dropdown', 'value'),
+        Input('user-month-slider', 'value')
+    ])
+def update_user_figure(city, month):
+    filtered_df = bs.load_data(city, month, day='all')
 
     updated_trace = ucd.get_users_insights(filtered_df)
 
@@ -149,10 +169,14 @@ def update_user_figure(month):
 
 # Callback to update the Time Insights graph on selection of month(s) from Months Slider
 @app.callback(
-    dash.dependencies.Output('time-stats', 'figure'),
-    [dash.dependencies.Input('time-month-slider', 'value')])
-def update_time_figure(month):
-    filtered_df = bs.load_data(city='chicago', month=month, day='all')
+    Output('time-stats-graph', 'figure'),
+    [
+        Input('city-dropdown', 'value'),
+        Input('time-month-slider', 'value')
+    ])
+def update_time_figure(city, month):
+
+    filtered_df = bs.load_data(city, month=month, day='all')
 
     updated_trace = ph.get_time_insights(filtered_df)
 

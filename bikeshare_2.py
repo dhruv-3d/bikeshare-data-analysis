@@ -39,8 +39,8 @@ def load_data(city, month, day):
         # filtering over range of months if applicable
         if type(month) == list:
             df = df[
-                (df['month'] >= month[0]) &
-                (df['month'] <= month[1])
+            (df['month'] >= month[0]) &
+            (df['month'] <= month[1])
             ]
         else:
             # use the index of the MONTHS list to get the corresponding int
@@ -135,7 +135,7 @@ def user_stats(df):
         earliest_yob = int(df['Birth Year'].min())
         most_common_yob = int(df['Birth Year'].mode()[0])
 
-        user_stat['most_recent_yob'] = most_recent_yob
+        user_stat['most_recent_yob'] = most_recent_yob        
         user_stat['earliest_yob'] = earliest_yob
         user_stat['most_common_yob'] = most_common_yob
 
