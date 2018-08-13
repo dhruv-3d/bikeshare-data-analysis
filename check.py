@@ -1,7 +1,6 @@
 import time
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 
 CITY_DATA = { 'chicago': 'chicago.csv',
               'new york city': 'new_york_city.csv',
@@ -17,22 +16,6 @@ df['hour'] = df['Start Time'].dt.hour # hour column
 df['routes'] = df['Start Station'] + ' to ' + df['End Station'] # station combination
 df['Birth Year'].fillna(0, inplace=True)
 
-days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-user_ct, cust_ct, subs_ct = {}, {}, {}
-x, y = [], []
+user_types = df['User Type'].value_counts()
+print("The types of users and their counts:-\n", user_types['Subscriber'])
 
-for day in days:
-    user_ct[day] = df[df['day_of_week'] == day].count()
-
-    # cust_ct[day] = dayframe[dayframe['User Type'] == 'Customer'].count()
-    # subs_ct[day] = dayframe[dayframe['User Type'] == 'Subscriber'].count()
-    
-for day, count in user_ct.items():
-    x.append(day)
-    y.append(count)
-
-
-plt.plot(x ,y)
-
-plt.legend()
-plt.show()

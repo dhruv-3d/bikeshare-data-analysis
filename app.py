@@ -24,12 +24,23 @@ app = dash.Dash(__name__)
 server = app.server
 app.layout = html.Div(children=[
     html.H1(
-        children='Bikeshare Data Visualization with Dash and its analysis',
+        children='Exploring US Bikeshare Data',
         style={'text-align': 'center'}
     ),
+
+    html.H3("Bikeshare System:"),
+    html.Span(children=[
+        "Over the past decade, bicycle-sharing systems have been growing in\
+        number and popularity in cities across the world. Bicycle-sharing systems\
+        allow users to rent bicycles on a very short-term basis for a price.\
+        This allows people to borrow a bike from point A and return it at point B, \
+        though they can also return it to the same location if they'd like to just go for a ride."
+    ],
+        style={'font-size': 18}),
+
     html.Div(
         children=[
-            html.h3('Select city to analyze:'),
+            html.H3('Select city to analyze:'),
             dcc.Dropdown(
                 id='city-dropdown',
                 options=[
@@ -44,6 +55,7 @@ app.layout = html.Div(children=[
             'margin-right': '70%'
         }
     ),
+
     dcc.Tabs(id="tabs", children=[
         dcc.Tab(label='Station & Trip Stats', children=[
             html.Div(children=[
@@ -56,17 +68,15 @@ app.layout = html.Div(children=[
                     style={
                         'text-transform': 'capitalize',
                         'font-weight': 'bold'
-                    }                
+                    }
                 )
             ],
-            style={
+                style={
                 'font-size': 20,
                 'padding': '40px 10px 0px 0px'
             }),
-            html.Div(children=[
-                
-            ],
-            style={
+            html.Div(children=[],
+                     style={
                 'font-size': 18
             })
         ]),
@@ -178,7 +188,7 @@ def update_user_figure(city, month):
         'layout': go.Layout(
             xaxis={'title': 'Days of the week'},
             yaxis={'title': 'Number of users'},
-            title='User counts on days of the week',
+            title='User counts on days of the week in ' + city.title(),
             showlegend=True,
             legend=go.layout.Legend(
                 x=0,
@@ -207,7 +217,7 @@ def update_time_figure(city, month):
         'layout': go.Layout(
             xaxis={'title': 'Days of the week'},
             yaxis={'title': 'Popular starting hours (24hr scale)'},
-            title='Comparision of popular starting hours between Subscribers and Customers',
+            title='Comparision of popular starting hours between Subscribers and Customers in ' + city.title(),
             showlegend=True,
             legend=go.layout.Legend(
                 x=0,
@@ -217,12 +227,14 @@ def update_time_figure(city, month):
         )
     }
 
+
 @app.callback(
     Output('city', 'children'),
     [Input('city-dropdown', 'value')])
 def selected_city(city):
 
     return city
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

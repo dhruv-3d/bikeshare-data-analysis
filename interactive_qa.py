@@ -78,23 +78,20 @@ def load_data(city, month, day):
     df['routes'] = df['Start Station'] + ' to ' + \
         df['End Station']  # station combination
 
-    # filtering by month if applicable
-    if month != 'all':
-        if type(month) == list:
-            df = df[
-                (df['month'] >= month[0]) &
-                (df['month'] <= month[1])
-            ]
-        else:
+    try:
+        # filtering by month if applicable
+        if month != 'all':
             # use the index of the MONTHS list to get the corresponding int
             month = MONTHS.index(month.title()) + 1
             df = df[df['month'] == month]
 
-    # filtering by day of week if applicable
-    if day != 'all':
-        df = df[df['day_of_week'] == day.title()]
+        # filtering by day of week if applicable
+        if day != 'all':
+            df = df[df['day_of_week'] == day.title()]
 
-    return df
+        return df
+    except:
+        raise Exception
 
 
 def time_stats(df):
@@ -153,11 +150,13 @@ def trip_duration_stats(df):
 
     # Display total travel time
     total_time = df['Trip Duration'].sum()
-    print("\nTotal travel time of all the trips: ", total_time)
+    print("\nTotal travel time of all the trips is %d hours and %d minutes" %
+          (total_time/3600, (total_time/60) % 60))
 
     # Display mean travel time
     mean_time = df['Trip Duration'].mean()
-    print("\nMean travel time of all the trips: ", mean_time)
+    print("\nMean travel time of all the trips is %d minutes and %d seconds" %
+          (mean_time/60, mean_time % 60))
 
     print("\nThis took %.5s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -172,12 +171,18 @@ def user_stats(df):
     if('User Type' in df):
         # Display counts of user types
         user_types = df['User Type'].value_counts()
-        print("The types of users and their counts:-\n", user_types)
+        print("The types of users and their counts:-\n")
+        for i in range(len(user_types)):
+            print("%s: %s" %
+                  (user_types.index[i], user_types[user_types.index[i]]))
 
     if('Gender' in df):
         # Display counts of gender
         gender_counts = df['Gender'].value_counts()
-        print("\nGender counts of user:-\n", gender_counts)
+        print("\nGender counts of user:-\n")
+        for i in range(len(gender_counts)):
+            print("%s: %s" %
+                  (gender_counts.index[i], gender_counts[gender_counts.index[i]]))
 
     if('Birth Year' in df):
         # Display earliest, most recent, and most common year of birth
@@ -186,8 +191,8 @@ def user_stats(df):
         most_common_yob = int(df['Birth Year'].mode()[0])
         print(
             "\n Earliest year of birth: {} \
-                \n Most recent year of birth: {} \
-                \n Most common year of birth: {} "
+            \n Most recent year of birth: {} \
+            \n Most common year of birth: {} "
             .format(earliest_yob, most_recent_yob, most_common_yob)
         )
 
@@ -199,17 +204,19 @@ def main():
     while True:
 
         city, month, day = get_filters()
-        df = load_data(city, month, day)
-        stat_choice = input(
-            'For what do you want the insights for?\n \
-            1. Regarding the users\n \
-            2. Regarding popular stations\n \
-            3. Regarding the most frequent times of travel\n \
-            4. Regarding trip durations\n \
-            5. For all of the above\n \
-            Enter a number of your choice. \n'
-        )
+
         try:
+            df = load_data(city, month, day)
+                        
+            stat_choice = input(
+                'For what do you want the insights for?\n \
+                1. Regarding the users\n \
+                2. Regarding popular stations\n \
+                3. Regarding the most frequent times of travel\n \
+                4. Regarding trip durations\n \
+                5. For all of the above\n \
+                Enter a number of your choice. \n'
+            )
             if int(stat_choice) == 1:
                 user_stats(df)
             elif int(stat_choice) == 2:
@@ -230,8 +237,11 @@ def main():
                 break
         except:
             print(
-                '\nSomething went wrong! You might have entered something ' +
-                'else instead of a "number" for your choice.\nPlease try again.\n'
+                '\nSomething went wrong! You might have entered something incorrectly.\n' +
+                'Things you might have entered incorrect:\n' +
+                '>> Enter a "Number" as your choice.\n' +
+                '>> Enter a full name of the "Month" or "Day".\n' +
+                'Please try again...'
             )
 
 
