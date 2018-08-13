@@ -10,6 +10,8 @@ import bikeshare_2 as bs
 import user_counts_by_day as ucd
 import popular_hours as ph
 import range_slider as rs
+import common_stats as cs
+
 
 # Load the data
 df = bs.load_data(city='chicago', month='all', day='all')
@@ -18,7 +20,8 @@ print('-'*40)
 print(user_stat)
 
 # Graph configuration
-app = dash.Dash()
+app = dash.Dash(__name__)
+server = app.server
 app.layout = html.Div(children=[
     html.H1(
         children='Bikeshare Data Visualization with Dash and its analysis',
@@ -26,11 +29,11 @@ app.layout = html.Div(children=[
     ),
     html.Div(
         children=[
+            html.h3('Select city to analyze:'),
             dcc.Dropdown(
                 id='city-dropdown',
                 options=[
                     {'label': 'Chicago', 'value': 'chicago'},
-                    {'label': 'New York City', 'value': 'new york city'},
                     {'label': 'Washington', 'value': 'washington'}
                 ],
                 value='chicago'
@@ -44,9 +47,28 @@ app.layout = html.Div(children=[
     dcc.Tabs(id="tabs", children=[
         dcc.Tab(label='Station & Trip Stats', children=[
             html.Div(children=[
-                html.H1(
-                    "The stats regarding popular station and routes and trips will be here."),
-            ])
+                html.Span(
+                    'Some other stats regarding '
+                ),
+                html.Span(
+                    children=[],
+                    id='city',
+                    style={
+                        'text-transform': 'capitalize',
+                        'font-weight': 'bold'
+                    }                
+                )
+            ],
+            style={
+                'font-size': 20,
+                'padding': '40px 10px 0px 0px'
+            }),
+            html.Div(children=[
+                
+            ],
+            style={
+                'font-size': 18
+            })
         ]),
         dcc.Tab(label='User Insights', children=[
             html.Div(children=[
@@ -195,6 +217,12 @@ def update_time_figure(city, month):
         )
     }
 
+@app.callback(
+    Output('city', 'children'),
+    [Input('city-dropdown', 'value')])
+def selected_city(city):
+
+    return city
 
 if __name__ == '__main__':
     app.run_server(debug=True)
