@@ -39,8 +39,8 @@ def load_data(city, month, day):
         # filtering over range of months if applicable
         if type(month) == list:
             df = df[
-            (df['month'] >= month[0]) &
-            (df['month'] <= month[1])
+                (df['month'] >= month[0]) &
+                (df['month'] <= month[1])
             ]
         else:
             # use the index of the MONTHS list to get the corresponding int
@@ -90,7 +90,7 @@ def station_stats(df):
     station_stat['popular_end_st'] = popular_end_st
 
     # display most frequent combination of start station and end station trip
-    pop = df['routes'].value_counts()
+    pop = df['routes'].value_counts()[0:5]
     # fetched the id of the max value occured from "routes" column
     popular_st = pop.idxmax()
     station_stat['popular_st'] = popular_st
@@ -105,11 +105,11 @@ def trip_duration_stats(df):
 
     # display total travel time
     total_time = df['Trip Duration'].sum()
-    trip_stat['total_trip_time'] = total_time
+    trip_stat['total_trip_time'] = "%d hours and %d minutes" %(total_time/3600, (total_time/60) % 60)
 
     # display mean travel time
     mean_time = df['Trip Duration'].mean()
-    trip_stat['mean_trip_time'] = mean_time
+    trip_stat['mean_trip_time'] = "%d minutes and %d seconds"%(mean_time/60, mean_time % 60)
 
     return trip_stat
 
@@ -135,7 +135,7 @@ def user_stats(df):
         earliest_yob = int(df['Birth Year'].min())
         most_common_yob = int(df['Birth Year'].mode()[0])
 
-        user_stat['most_recent_yob'] = most_recent_yob        
+        user_stat['most_recent_yob'] = most_recent_yob
         user_stat['earliest_yob'] = earliest_yob
         user_stat['most_common_yob'] = most_common_yob
 

@@ -17,7 +17,6 @@ import common_stats as cs
 df = bs.load_data(city='chicago', month='all', day='all')
 user_stat = bs.user_stats(df)
 print('-'*40)
-print(user_stat)
 
 # Graph configuration
 app = dash.Dash(__name__)
@@ -48,6 +47,11 @@ app.layout = html.Div(children=[
                     {'label': 'Washington', 'value': 'washington'}
                 ],
                 value='chicago'
+            ),
+            html.Span(
+                id='hidden-df',
+                children=None,
+                style={'display': 'None'}
             )
         ],
         style={
@@ -59,26 +63,33 @@ app.layout = html.Div(children=[
     dcc.Tabs(id="tabs", children=[
         dcc.Tab(label='Station & Trip Stats', children=[
             html.Div(children=[
-                html.Span(
-                    'Some other stats regarding '
-                ),
-                html.Span(
-                    children=[],
-                    id='city',
-                    style={
-                        'text-transform': 'capitalize',
-                        'font-weight': 'bold'
-                    }
-                )
-            ],
+                html.P(children=[
+                    html.Span(
+                        'Some more insights regarding bikesharing in '
+                    ),
+                    html.Span(
+                        children=[],
+                        id='city-name',
+                        style={
+                            'text-transform': 'capitalize',
+                            'font-weight': 'bold'
+                        }
+                    ),
+                ],
                 style={
-                'font-size': 20,
-                'padding': '40px 10px 0px 0px'
-            }),
-            html.Div(children=[],
-                     style={
-                'font-size': 18
-            })
+                    'text-align': 'center',
+                    'font-size': 20,
+                    'margin-top': 40
+                }),
+                html.Div(children=cs.other_stats(df),
+                id='common-stats',
+                style={
+                    'font-size': 16,
+                    'padding': '40px 0px 0px 0px'
+                    }
+                )],
+            ),
+            
         ]),
         dcc.Tab(label='User Insights', children=[
             html.Div(children=[
@@ -229,11 +240,29 @@ def update_time_figure(city, month):
 
 
 @app.callback(
-    Output('city', 'children'),
+    Output('city-name', 'children'),
     [Input('city-dropdown', 'value')])
 def selected_city(city):
-
     return city
+
+@app.callback(
+    Output('hidden-df', 'children'),
+    [Input('city-dropdown', 'value')])
+def load_df(city):
+    new_df = bs.load_data(city, month='all', day='all')
+    return new_df.to_json()
+
+@app.callback(
+    Output('common-stats', 'children'),
+    [Input('hidden-df', 'children')])
+def load_new_df_data(df):
+    return cs.other_stats(pd.read_json(df))
+
+
+app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
+
+# Loading screen CSS
+app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"})
 
 
 if __name__ == '__main__':

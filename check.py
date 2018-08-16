@@ -1,21 +1,20 @@
-import time
-import pandas as pd
-import numpy as np
+import dash_core_components as dcc
+import dash_html_components as html
+import bikeshare_2 as bs
 
-CITY_DATA = { 'chicago': 'chicago.csv',
-              'new york city': 'new_york_city.csv',
-              'washington': 'washington.csv' }
 
-df = pd.read_csv('chicago.csv')
+def other_stats():
+    all_df = {}
+    all_df['chicago_df'] = bs.load_data('chicago','all','all')
+    all_df['new_york'] = bs.load_data('new york city','all','all')
+    all_df['washington'] = bs.load_data('washington','all','all')
 
-df['Start Time'] = pd.to_datetime(df['Start Time'])
-df['End Time'] = pd.to_datetime(df['End Time'])
-df['month'] = df['Start Time'].dt.month # month column
-df['day_of_week'] = df['Start Time'].dt.weekday_name # day column
-df['hour'] = df['Start Time'].dt.hour # hour column
-df['routes'] = df['Start Station'] + ' to ' + df['End Station'] # station combination
-df['Birth Year'].fillna(0, inplace=True)
+    all_stats = {}
+    for name, df in zip(all_df.keys(), all_df.values()):
 
-user_types = df['User Type'].value_counts()
-print("The types of users and their counts:-\n", user_types['Subscriber'])
+        all_stats[name + '_station_stat'] = bs.station_stats(df)
+        all_stats[name + '_trip_stat'] = bs.trip_duration_stats(df)
 
+    return all_stats.keys()
+
+print(other_stats())
