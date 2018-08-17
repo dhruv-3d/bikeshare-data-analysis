@@ -8,8 +8,6 @@ def month_selector(slider_id):
     for m in bs.MONTHS:
         range_makrs[bs.MONTHS.index(m) + 1] = m
 
-    print(range_makrs)
-
     slider = dcc.RangeSlider(
         id=slider_id,
         min=1,

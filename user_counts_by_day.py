@@ -11,7 +11,7 @@ def get_users_insights(df):
 
     for day in bs.DAYS:
         dayframe = df[df['day_of_week'] == day]
-        user_ct[day] = dayframe['day_of_week'].count()
+        # user_ct[day] = dayframe['day_of_week'].count()
 
         cust_frame = dayframe[dayframe['User Type'] == 'Customer']
         cust_ct[day] = cust_frame['User Type'].count()

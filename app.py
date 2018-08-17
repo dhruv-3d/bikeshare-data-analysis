@@ -21,6 +21,7 @@ print('-'*40)
 # Graph configuration
 app = dash.Dash(__name__)
 server = app.server
+app.title = 'Exploring Bikeshare Data'
 app.layout = html.Div(children=[
     html.H1(
         children='Exploring US Bikeshare Data',
@@ -61,40 +62,37 @@ app.layout = html.Div(children=[
     ),
 
     dcc.Tabs(id="tabs", children=[
-        dcc.Tab(label='Station & Trip Stats', children=[
+        dcc.Tab(label='Common', children=[
             html.Div(children=[
-                html.P(children=[
-                    html.Span(
-                        'Some more insights regarding bikesharing in '
-                    ),
-                    html.Span(
-                        children=[],
-                        id='city-name',
-                        style={
-                            'text-transform': 'capitalize',
-                            'font-weight': 'bold'
-                        }
-                    ),
-                ],
+                html.H4(
+                    children='Some common insights of all the cites',
+                ),
+                html.Div(children=cs.other_stats()[0]),
+                html.Hr(),
+                html.Div(children=cs.other_stats()[1]),
+            ],
                 style={
+                    'padding-bottom': 50,
                     'text-align': 'center',
-                    'font-size': 20,
-                    'margin-top': 40
-                }),
-                html.Div(children=cs.other_stats(df),
-                id='common-stats',
-                style={
-                    'font-size': 16,
-                    'padding': '40px 0px 0px 0px'
-                    }
-                )],
-            ),
-            
+                    'align-items': 'center'
+            }),
         ]),
         dcc.Tab(label='User Insights', children=[
             html.Div(children=[
                 html.P(
-                    'Describe in breif about the plotting done below.'
+                    "The below graph shows the data of number of different types of\
+                     bikesharing users i.e. Subscribers and Customers over\
+                     the days of the week. By defualt it shows data for the\
+                     span of all the 6 months, but if you want you can use\
+                     the range slider below the graph to check the data for\
+                     particular month or range of month. The graph is interactive,\
+                     you can hover over the plotted data and see the labels\
+                     and values. If you want to check for particular type of user,\
+                     you can just toggle the graph legends. Aside from this the graph\
+                     have a default toolbar which appears on hover, you can use to play\
+                     around if you want.",
+                    
+                    style={'padding':20, 'font-size': 18}
                 ),
                 dcc.Graph(
                     figure=go.Figure(
@@ -113,36 +111,39 @@ app.layout = html.Div(children=[
                     ),
                     style={
                         'height': 300,
-                        'padding': 30,
+                        'padding': 20,
                     },
                     id='user-stats-graph'
                 ),
                 html.Div(
                     children=[rs.month_selector('user-month-slider')],
-                    style={'padding': 30}
-                ),
-                html.P(
-                    'Total No. of subscribers: ' +
-                    str(user_stat['user_counts'][0])
-                ),
-                html.P(
-                    'Total No. of customers: ' +
-                    str(user_stat['user_counts'][1])
-                ),
-                html.P(
-                    'Total No. of dependent: ' +
-                    str(user_stat['user_counts'][2])
+                    style={'padding': 20}
                 ),
                 html.Hr(),
                 html.P(
-                    'Describe in detail, the insights from above plot.'
+                    "Throw some insights here for above graph",
+                    
+                    style={'padding':20, 'font-size': 18}
                 ),
             ])
         ]),
         dcc.Tab(label='Time Insights', children=[
             html.Div([
                 html.P(
-                    'Describe in breif about the plotting done below.'
+                    "The below graph shows the data of popular hours of the\
+                     day which different types of bikesharing users i.e.\
+                     Subscribers and Customers are most active for every\
+                     days of the week. By defualt it shows data for the\
+                     span of all the 6 months, but if you want you can use\
+                     the range slider below the graph to check the data for\
+                     particular month or range of month. The graph is interactive,\
+                     you can hover over the plotted data and see the labels\
+                     and values. If you want to check for particular type of user,\
+                     you can just toggle the graph legends. Aside from this the graph\
+                     have a default toolbar which appears on hover, you can use to play\
+                     around if you want.",
+                    
+                    style={'padding':20, 'font-size': 18}
                 ),
                 dcc.Graph(
                     figure=go.Figure(
@@ -162,7 +163,7 @@ app.layout = html.Div(children=[
                     ),
                     style={
                         'height': 300,
-                        'padding': 30,
+                        'padding': 20,
                     },
                     id='time-stats-graph'
                 ),
@@ -170,7 +171,7 @@ app.layout = html.Div(children=[
                     rs.month_selector('time-month-slider')
                 ],
                     style={
-                    'padding': 30,
+                    'padding': 20,
                 }),
                 html.Hr(),
                 html.P(
@@ -178,11 +179,12 @@ app.layout = html.Div(children=[
                 ),
             ])
         ]),
-    ])
+    ]),
 ])
 
-
 # Callback to update the User Insights graph on selection of month(s) from Months Slider
+
+
 @app.callback(
     Output('user-stats-graph', 'figure'),
     [
@@ -190,8 +192,8 @@ app.layout = html.Div(children=[
         Input('user-month-slider', 'value')
     ])
 def update_user_figure(city, month):
-    filtered_df = bs.load_data(city, month, day='all')
 
+    filtered_df = bs.load_data(city, month, day='all')
     updated_trace = ucd.get_users_insights(filtered_df)
 
     return {
@@ -209,8 +211,9 @@ def update_user_figure(city, month):
         )
     }
 
-
 # Callback to update the Time Insights graph on selection of month(s) from Months Slider
+
+
 @app.callback(
     Output('time-stats-graph', 'figure'),
     [
@@ -220,7 +223,6 @@ def update_user_figure(city, month):
 def update_time_figure(city, month):
 
     filtered_df = bs.load_data(city, month=month, day='all')
-
     updated_trace = ph.get_time_insights(filtered_df)
 
     return {
@@ -239,30 +241,11 @@ def update_time_figure(city, month):
     }
 
 
-@app.callback(
-    Output('city-name', 'children'),
-    [Input('city-dropdown', 'value')])
-def selected_city(city):
-    return city
-
-@app.callback(
-    Output('hidden-df', 'children'),
-    [Input('city-dropdown', 'value')])
-def load_df(city):
-    new_df = bs.load_data(city, month='all', day='all')
-    return new_df.to_json()
-
-@app.callback(
-    Output('common-stats', 'children'),
-    [Input('hidden-df', 'children')])
-def load_new_df_data(df):
-    return cs.other_stats(pd.read_json(df))
-
-
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-
+app.css.append_css(
+    {"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 # Loading screen CSS
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"})
+app.css.append_css(
+    {"external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"})
 
 
 if __name__ == '__main__':
