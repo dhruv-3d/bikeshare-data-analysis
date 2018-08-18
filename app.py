@@ -45,15 +45,11 @@ app.layout = html.Div(children=[
                 id='city-dropdown',
                 options=[
                     {'label': 'Chicago', 'value': 'chicago'},
+                    {'label': 'New York', 'value': 'new york city'},
                     {'label': 'Washington', 'value': 'washington'}
                 ],
                 value='chicago'
             ),
-            html.Span(
-                id='hidden-df',
-                children=None,
-                style={'display': 'None'}
-            )
         ],
         style={
             'padding-bottom': '1%',
@@ -91,8 +87,8 @@ app.layout = html.Div(children=[
                      you can just toggle the graph legends. Aside from this the graph\
                      have a default toolbar which appears on hover, you can use to play\
                      around if you want.",
-                    
-                    style={'padding':20, 'font-size': 18}
+
+                    style={'padding': 20, 'font-size': 18}
                 ),
                 dcc.Graph(
                     figure=go.Figure(
@@ -120,10 +116,37 @@ app.layout = html.Div(children=[
                     style={'padding': 20}
                 ),
                 html.Hr(),
+                html.Div(children=[
+                    html.P(
+                        "Aside from the common statistics gained from the data\
+                         which is mentioned in 'Common' tab, the above graph\
+                         reveals some other insights."
+                    ),
+                    html.P(html.Ul(html.Li(children=[
+                        "You can see that for all the months, overall the number\
+                         of Subscribers remains high during weekdays and low on\
+                         weekends and vice versa for the Customers."
+                    ]))),
+                    html.P(html.Ul(html.Li(children=[
+                        "You can see that for all the months, overall the number\
+                         of Subscribers remains high during weekdays and low on\
+                         weekends and vice versa for the Customers. From that we\
+                         can assume that majority of subscribers are people who uses\
+                         bikesharing system for their daily commuting and the\
+                         "
+                    ]))),
+                ],
+                id='chicago-stats',
+                style={'padding': 20, 'font-size': 18, 'display':'block'}),
                 html.P(
-                    "Throw some insights here for above graph",
-                    
-                    style={'padding':20, 'font-size': 18}
+                    "Throw some new york's insights here for above graph",
+                    id='new-york-stats',
+                    style={'padding': 20, 'font-size': 18}
+                ),
+                html.P(
+                    "Throw some washington's here for above graph",
+                    id='washington-stats',
+                    style={'padding': 20, 'font-size': 18}
                 ),
             ])
         ]),
@@ -142,8 +165,8 @@ app.layout = html.Div(children=[
                      you can just toggle the graph legends. Aside from this the graph\
                      have a default toolbar which appears on hover, you can use to play\
                      around if you want.",
-                    
-                    style={'padding':20, 'font-size': 18}
+
+                    style={'padding': 20, 'font-size': 18}
                 ),
                 dcc.Graph(
                     figure=go.Figure(
@@ -239,6 +262,36 @@ def update_time_figure(city, month):
             margin=go.layout.Margin(l=40, r=0, t=40, b=30)
         )
     }
+
+
+@app.callback(
+    Output('chicago-stats', 'style'),
+    [Input('city-dropdown', 'value')])
+def hide_show(city):
+    if city == 'chicago':
+        return {'padding': 20, 'font-size': 18, 'display':'block'}
+    else:
+        return {'display': 'none'}
+
+
+@app.callback(
+    Output('new-york-stats', 'style'),
+    [Input('city-dropdown', 'value')])
+def hide_show(city):
+    if city == 'new york city':
+        return {'padding': 20, 'font-size': 18, 'display':'block'}
+    else:
+        return {'display': 'none'}
+
+
+@app.callback(
+    Output('washington-stats', 'style'),
+    [Input('city-dropdown', 'value')])
+def hide_show(city):
+    if city == 'washington':
+        return {'padding': 20, 'font-size': 18, 'display':'block'}
+    else:
+        return {'display': 'none'}
 
 
 app.css.append_css(
