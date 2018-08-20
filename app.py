@@ -123,42 +123,29 @@ app.layout = html.Div(children=[
                          reveals some other insights."
                     ),
                     html.P(html.Ul(html.Li(children=[
-                        "You can see that for all the months, overall the number\
+                        "You can see that for all the months, overall, the number\
                          of Subscribers remains high during weekdays and low on\
                          weekends and vice versa for the Customers."
                     ]))),
                     html.P(html.Ul(html.Li(children=[
-                        "You can see that for all the months, overall the number\
-                         of Subscribers remains high during weekdays and low on\
-                         weekends and vice versa for the Customers. From that we\
-                         can assume that majority of subscribers are people who uses\
-                         bikesharing system for their daily commuting and the\
-                         "
+                        "From that we can assume that majority of subscribers are\
+                         people who uses bikesharing system for their daily commuting\
+                         to their work."
                     ]))),
+
                 ],
-                id='chicago-stats',
-                style={'padding': 20, 'font-size': 18, 'display':'block'}),
-                html.P(
-                    "Throw some new york's insights here for above graph",
-                    id='new-york-stats',
-                    style={'padding': 20, 'font-size': 18}
-                ),
-                html.P(
-                    "Throw some washington's here for above graph",
-                    id='washington-stats',
-                    style={'padding': 20, 'font-size': 18}
-                ),
+                    style={'text-align': 'justify', 'margin-left':60, 'font-size': 18, 'display': 'block'}
+                )
             ])
         ]),
         dcc.Tab(label='Time Insights', children=[
             html.Div([
                 html.P(
-                    "The below graph shows the data of popular hours of the\
-                     day which different types of bikesharing users i.e.\
-                     Subscribers and Customers are most active for every\
-                     days of the week. By defualt it shows data for the\
-                     span of all the 6 months, but if you want you can use\
-                     the range slider below the graph to check the data for\
+                    "The below graph shows the popular(or most common) 'starting' hours of the\
+                     day for bikesharing users i.e. when Subscribers and Customers\
+                     are most active for every days of the week. By defualt it\
+                     shows data for the span of all the 6 months, but if you want\
+                     you can use the range slider below the graph to check the data for\
                      particular month or range of month. The graph is interactive,\
                      you can hover over the plotted data and see the labels\
                      and values. If you want to check for particular type of user,\
@@ -197,9 +184,29 @@ app.layout = html.Div(children=[
                     'padding': 20,
                 }),
                 html.Hr(),
-                html.P(
-                    'Describe in detail, the insights from above plot.'
-                ),
+                html.Div(children=[
+                    html.P(
+                        "Aside from the common statistics gained from the data\
+                         which is mentioned in 'Common' tab, the above graph\
+                         reveals some other insights."
+                    ),
+                    html.P(html.Ul(html.Li(children=[
+                        "You can see that for all the months, overall, the starting\
+                         hours for Customers is earlier in the day than Subscribers\
+                         on weekdays for any given month and on weekends the Customers\
+                         starts their bike ride in later hour of the day than Subscribers."
+                    ]))),
+                    html.P(html.Ul(html.Li(children=[
+                        "These popular hour also means that these are the pick hours\
+                         in bikesharing system and for city of New York and Chicago\
+                         its in the evening around 5pm while in the city of Washington\
+                         where there are highest number of Customers, its in the morning\
+                         around 8am."
+                    ]))),
+
+                ],
+                    style={'text-align': 'justify', 'margin-left':60, 'padding': 20, 'font-size': 18, 'display': 'block'}
+                )
             ])
         ]),
     ]),
@@ -264,34 +271,34 @@ def update_time_figure(city, month):
     }
 
 
-@app.callback(
-    Output('chicago-stats', 'style'),
-    [Input('city-dropdown', 'value')])
-def hide_show(city):
-    if city == 'chicago':
-        return {'padding': 20, 'font-size': 18, 'display':'block'}
-    else:
-        return {'display': 'none'}
+# @app.callback(
+#     Output('chicago-stats', 'style'),
+#     [Input('city-dropdown', 'value')])
+# def hide_show(city):
+#     if city == 'chicago':
+#         return {'padding': 20, 'font-size': 18, 'display':'block'}
+#     else:
+#         return {'display': 'none'}
 
 
-@app.callback(
-    Output('new-york-stats', 'style'),
-    [Input('city-dropdown', 'value')])
-def hide_show(city):
-    if city == 'new york city':
-        return {'padding': 20, 'font-size': 18, 'display':'block'}
-    else:
-        return {'display': 'none'}
+# @app.callback(
+#     Output('new-york-stats', 'style'),
+#     [Input('city-dropdown', 'value')])
+# def hide_show(city):
+#     if city == 'new york city':
+#         return {'padding': 20, 'font-size': 18, 'display':'block'}
+#     else:
+#         return {'display': 'none'}
 
 
-@app.callback(
-    Output('washington-stats', 'style'),
-    [Input('city-dropdown', 'value')])
-def hide_show(city):
-    if city == 'washington':
-        return {'padding': 20, 'font-size': 18, 'display':'block'}
-    else:
-        return {'display': 'none'}
+# @app.callback(
+#     Output('washington-stats', 'style'),
+#     [Input('city-dropdown', 'value')])
+# def hide_show(city):
+#     if city == 'washington':
+#         return {'padding': 20, 'font-size': 18, 'display':'block'}
+#     else:
+#         return {'display': 'none'}
 
 
 app.css.append_css(
