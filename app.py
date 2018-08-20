@@ -27,7 +27,6 @@ app.layout = html.Div(children=[
         children='Exploring US Bikeshare Data',
         style={'text-align': 'center'}
     ),
-
     html.H3("Bikeshare System:"),
     html.Span(children=[
         "Over the past decade, bicycle-sharing systems have been growing in\
@@ -213,8 +212,6 @@ app.layout = html.Div(children=[
 ])
 
 # Callback to update the User Insights graph on selection of month(s) from Months Slider
-
-
 @app.callback(
     Output('user-stats-graph', 'figure'),
     [
@@ -242,8 +239,6 @@ def update_user_figure(city, month):
     }
 
 # Callback to update the Time Insights graph on selection of month(s) from Months Slider
-
-
 @app.callback(
     Output('time-stats-graph', 'figure'),
     [
@@ -269,37 +264,6 @@ def update_time_figure(city, month):
             margin=go.layout.Margin(l=40, r=0, t=40, b=30)
         )
     }
-
-
-# @app.callback(
-#     Output('chicago-stats', 'style'),
-#     [Input('city-dropdown', 'value')])
-# def hide_show(city):
-#     if city == 'chicago':
-#         return {'padding': 20, 'font-size': 18, 'display':'block'}
-#     else:
-#         return {'display': 'none'}
-
-
-# @app.callback(
-#     Output('new-york-stats', 'style'),
-#     [Input('city-dropdown', 'value')])
-# def hide_show(city):
-#     if city == 'new york city':
-#         return {'padding': 20, 'font-size': 18, 'display':'block'}
-#     else:
-#         return {'display': 'none'}
-
-
-# @app.callback(
-#     Output('washington-stats', 'style'),
-#     [Input('city-dropdown', 'value')])
-# def hide_show(city):
-#     if city == 'washington':
-#         return {'padding': 20, 'font-size': 18, 'display':'block'}
-#     else:
-#         return {'display': 'none'}
-
 
 app.css.append_css(
     {"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
