@@ -68,7 +68,7 @@ def load_data(city, month, day):
     """
 
     print('\nPreparing the data...\n')
-    df = pd.read_csv(CITY_DATA[city])
+    df = pd.read_csv('./web_app/' + CITY_DATA[city])
 
     df['Start Time'] = pd.to_datetime(df['Start Time'])
     df['End Time'] = pd.to_datetime(df['End Time'])
@@ -215,6 +215,7 @@ def main():
                 3. Regarding the most frequent times of travel\n \
                 4. Regarding trip durations\n \
                 5. For all of the above\n \
+                6. Show me the Raw Data\n \
                 Enter a number of your choice. \n'
             )
             if int(stat_choice) == 1:
@@ -230,6 +231,9 @@ def main():
                 station_stats(df)
                 time_stats(df)
                 trip_duration_stats(df)
+            elif int(stat_choice) == 6:
+                print('-'*140 + '\nRaw data\n' + '-'*140)
+                print(df.head(10))
 
             restart = input(
                 '\nWould you like to explore some more? Enter yes or no.\n')
