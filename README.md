@@ -14,7 +14,7 @@ source venv/bin/activate
 *Install the necessary packages: 
 pip install -r requirements.txt
 
-run the following command:
->>python3 app.py
+run the following command in your terminal:
+python3 app.py
 
 Then open your browser and go to: http://127.0.0.1:8050/
