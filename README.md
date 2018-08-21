@@ -9,6 +9,7 @@ The other resource I used for solving the task is the official documentation of 
 
 
 After that I was learning the **[Dash Framework](https://plot.ly/products/dash/)** on my own and thought I could convert this task into a simple web application using Dash, so I did!
+This enabled me to get the basic idea ofthe how we can use data and can make visualization to gain insights from, still I have much to learn.
 
 ## Setup and Installation of the Web app
 *Note: This web app is developed in python3 and installing in virtual environment is recommended
