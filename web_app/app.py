@@ -87,7 +87,7 @@ app.layout = html.Div(children=[
                      have a default toolbar which appears on hover, you can use to play\
                      around if you want.",
 
-                    style={'padding': 20, 'font-size': 18}
+                    style={'text-align': 'justify', 'padding': 20, 'font-size': 18}
                 ),
                 dcc.Graph(
                     figure=go.Figure(
@@ -152,7 +152,7 @@ app.layout = html.Div(children=[
                      have a default toolbar which appears on hover, you can use to play\
                      around if you want.",
 
-                    style={'padding': 20, 'font-size': 18}
+                    style={'text-align': 'justify', 'padding': 20, 'font-size': 18}
                 ),
                 dcc.Graph(
                     figure=go.Figure(
